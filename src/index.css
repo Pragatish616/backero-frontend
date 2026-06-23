@@ -1,0 +1,80 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/inter/800.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 228 18% 4%;
+    --foreground: 225 12% 93%;
+    --card: 224 14% 9%;
+    --card-foreground: 225 12% 93%;
+    --popover: 224 14% 9%;
+    --popover-foreground: 225 12% 93%;
+    --primary: 239 84% 67%;
+    --primary-foreground: 228 18% 4%;
+    --secondary: 220 12% 14%;
+    --secondary-foreground: 225 12% 93%;
+    --muted: 220 12% 14%;
+    --muted-foreground: 222 10% 53%;
+    --accent: 220 12% 14%;
+    --accent-foreground: 225 12% 93%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 224 12% 19%;
+    --input: 224 12% 19%;
+    --ring: 239 84% 67%;
+    --radius: 0.625rem;
+    --sidebar-background: 224 14% 9%;
+    --sidebar-foreground: 225 12% 93%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 228 18% 4%;
+    --sidebar-accent: 220 12% 14%;
+    --sidebar-accent-foreground: 225 12% 93%;
+    --sidebar-border: 224 12% 19%;
+    --sidebar-ring: 239 84% 67%;
+
+    /* Custom design tokens */
+    --bg-primary: #0B0C0F;
+    --bg-secondary: #14161B;
+    --bg-tertiary: #1C1F26;
+    --bg-quaternary: #252932;
+    --border-subtle: #2A2E38;
+    --border-medium: #3A4050;
+    --border-strong: #4A5268;
+    --text-primary: #E8EAEF;
+    --text-secondary: #9BA3B4;
+    --text-tertiary: #5C6370;
+    --text-inverse: #0B0C0F;
+    --accent-dashboard: #6366F1;
+    --accent-input: #06D6A0;
+    --accent-structure: #F59E0B;
+    --accent-execution: #EF4444;
+    --accent-validation: #8B5CF6;
+    --accent-output: #0EA5E9;
+    --success: #22C55E;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply border-border-subtle;
+  }
+}
+.milestone-v2-1780658213 { display: none; }
