@@ -73,34 +73,6 @@ interface EditableScene {
   audio: string;
   editMarkers: string; // stored as JSON string for textarea editing
 }
-// Helper: convert Phase 3 scene shape → Phase 4 EditableScene shape
-function mapPhase3Scene(raw: Record<string, unknown>): EditableScene {
-  const cam = (raw.camera as Record<string, string>) ?? {};
-  const act = (raw.actor as Record<string, unknown>) ?? {};
-  const markers = raw.editMarkers;
-  return {
-    sceneNum: Number(raw.sceneNum ?? 1),
-    name: String(raw.name ?? ''),
-    timingStart: Number(raw.timingStart ?? 0),
-    timingEnd: Number(raw.timingEnd ?? 0),
-    duration: Number(raw.duration ?? 0),
-    dialogue: String(raw.dialogue ?? ''),
-    action: String(raw.action ?? ''),
-    cameraShot: cam.shot ?? 'Medium',
-    cameraAngle: cam.angle ?? 'Eye level',
-    cameraMovement: cam.movement ?? 'Static',
-    actorExpression: String(act.expression ?? 'Confident'),
-    actorEnergy: Number(act.energy ?? 7),
-    actorPace: String(act.pace ?? 'Medium'),
-    visual: String(raw.visual ?? ''),
-    audio: String(raw.audio ?? ''),
-    editMarkers: Array.isArray(markers)
-      ? JSON.stringify(markers)
-      : typeof markers === 'string'
-      ? markers
-      : '[]',
-  };
-}
 // Helper: convert Phase 3 SceneBeat shape → Phase 4 EditableScene shape
 function mapPhase3Scene(raw: Record<string, unknown>): EditableScene {
   const cam = (raw.camera as Record<string, string>) ?? {};
@@ -968,21 +940,6 @@ export default function Phase4() {
     setChecks(prev => prev.map(c => c.id === checkId ? { ...c, overridden: !c.overridden } : c));
   }, []);
 
-  // Load the real Phase 3 screenplay to replace INITIAL_SCENES
-  useEffect(() => {
-    if (!briefId) return;
-    phase3Api
-      .get(briefId)
-      .then((res) => {
-        const rawScenes = (res as Record<string, unknown>).scenes;
-        if (res.generated && Array.isArray(rawScenes) && rawScenes.length > 0) {
-          setScenes(rawScenes.map((s) => mapPhase3Scene(s as Record<string, unknown>)));
-        }
-      })
-      .catch(() => {
-        // Keep INITIAL_SCENES as fallback — silent fail
-      });
-  }, [briefId]);
   /* ═══════ APPLY FIX HANDLER ═══════ */
   const handleApplyFix = useCallback((checkId: string) => {
     setScenes(prev => {
