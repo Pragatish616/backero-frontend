@@ -163,6 +163,11 @@ export interface Phase1Payload {
   reference_description?: string | null;
   selected_nugget_index?: number | null;
   nugget_rationale?: string | null;
+  language?: string | null;
+  content_creator?: string | null;
+  number_of_actors?: number | null;
+  aspect_ratio?: string | null;
+  estimated_length?: string | null;
 }
 
 export const phase1 = {
