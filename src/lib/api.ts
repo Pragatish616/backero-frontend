@@ -168,6 +168,7 @@ export interface Phase1Payload {
   number_of_actors?: number | null;
   aspect_ratio?: string | null;
   estimated_length?: string | null;
+  actor_brief?: string | null;
 }
 
 export const phase1 = {
