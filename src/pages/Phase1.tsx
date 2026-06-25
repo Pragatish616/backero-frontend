@@ -219,6 +219,7 @@ export default function Phase1() {
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [creator, setCreator] = useState('');
   const [actor, setActor] = useState('');
+  const [actorBrief, setActorBrief] = useState('');
   const [company, setCompany] = useState('');
   const [platform, setPlatform] = useState('');
   const [estimatedLength, setEstimatedLength] = useState('');
