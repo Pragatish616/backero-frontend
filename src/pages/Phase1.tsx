@@ -274,6 +274,12 @@ export default function Phase1() {
         if (d.content_style) setContentStyle(d.content_style);
         if (d.on_camera_actor) setActor(d.on_camera_actor);
         if (d.brand_company) setCompany(d.brand_company);
+                if (d.language) setLanguage(d.language);
+                        if (d.content_creator) setCreator(d.content_creator);
+                                if (d.number_of_actors) setActorCount(String(d.number_of_actors));
+                                        if (d.aspect_ratio) setAspectRatio(d.aspect_ratio);
+                                                if (d.estimated_length) setEstimatedLength(d.estimated_length);
+                                                        if (d.production_date) setDate(d.production_date);
         if (d.nugget_rationale) setWhyNugget(d.nugget_rationale);
         if (d.selected_nugget_index !== null && d.selected_nugget_index !== undefined) {
           setSelectedNugget(d.selected_nugget_index);
@@ -392,6 +398,12 @@ export default function Phase1() {
     }),
     selected_nugget_index: selectedNugget,
     nugget_rationale: whyNugget || null,
+        language: language || null,
+            content_creator: creator || null,
+                number_of_actors: actorCount ? parseInt(actorCount, 10) : null,
+                    aspect_ratio: aspectRatio || null,
+                        estimated_length: estimatedLength || null,
+                            production_date: date || null,
   });
 
   const handleSaveDraft = () => {
