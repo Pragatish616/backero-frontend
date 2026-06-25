@@ -220,7 +220,6 @@ export default function Phase1() {
   const [creator, setCreator] = useState('');
   const [actor, setActor] = useState('');
   const [actorBrief, setActorBrief] = useState('');
-  const [actorBrief, setActorBrief] = useState('');
   const [company, setCompany] = useState('');
   const [platform, setPlatform] = useState('');
   const [estimatedLength, setEstimatedLength] = useState('');
@@ -396,7 +395,6 @@ export default function Phase1() {
     knowledge_nuggets: liveNuggets ?? (nuggetsVisible ? NUGGET_DATA : null),
     on_camera_actor: actor || null,
     actor_brief: actorBrief || null,
-    actor_brief: actorBrief || null,
     brand_company: company || null,
     reference_description: buildReferenceDescription({
       thePoint, whyTheyCare, theProof, actionableTakeaway, copyDescription,
@@ -569,16 +567,6 @@ export default function Phase1() {
                   value={actor}
                   onChange={(e) => setActor(e.target.value)}
                   className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30"
-                />
-              </div>
-              {/* Actor Brief */}
-              <div>
-                <FormLabel>Actor Brief</FormLabel>
-                <Textarea
-                  placeholder="Describe the actor's on-screen style, tone, or key personality notes for the AI director..."
-                  value={actorBrief}
-                  onChange={(e) => setActorBrief(e.target.value)}
-                  className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 min-h-[72px] resize-none"
                 />
               </div>
               {/* Actor Brief */}
