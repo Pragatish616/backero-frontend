@@ -923,6 +923,21 @@ export default function Phase4() {
     setChecks(prev => prev.map(c => c.id === checkId ? { ...c, overridden: !c.overridden } : c));
   }, []);
 
+  // Load the real Phase 3 screenplay to replace INITIAL_SCENES
+  useEffect(() => {
+    if (!briefId) return;
+    phase3Api
+      .get(briefId)
+      .then((res) => {
+        const rawScenes = (res as Record<string, unknown>).scenes;
+        if (res.generated && Array.isArray(rawScenes) && rawScenes.length > 0) {
+          setScenes(rawScenes.map((s) => mapPhase3Scene(s as Record<string, unknown>)));
+        }
+      })
+      .catch(() => {
+        // Keep INITIAL_SCENES as fallback — silent fail
+      });
+  }, [briefId]);
   /* ═══════ APPLY FIX HANDLER ═══════ */
   const handleApplyFix = useCallback((checkId: string) => {
     setScenes(prev => {
