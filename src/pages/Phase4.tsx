@@ -12,9 +12,8 @@ import { Layout } from '@/components/Layout';
 import { Card } from '@/components/Card';
 import { StatusBadge } from '@/components/StatusBadge';
 import { cn } from '@/lib/utils';
-import { phase4 as phase4Api, ApiError } from '@/lib/api';
+import { phase4 as phase4Api, phase3 as phase3Api, ApiError } from '@/lib/api'
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
-
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  TYPES                                                              */
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -74,7 +73,34 @@ interface EditableScene {
   audio: string;
   editMarkers: string; // stored as JSON string for textarea editing
 }
-
+// Helper: convert Phase 3 scene shape → Phase 4 EditableScene shape
+function mapPhase3Scene(raw: Record<string, unknown>): EditableScene {
+  const cam = (raw.camera as Record<string, string>) ?? {};
+  const act = (raw.actor as Record<string, unknown>) ?? {};
+  const markers = raw.editMarkers;
+  return {
+    sceneNum: Number(raw.sceneNum ?? 1),
+    name: String(raw.name ?? ''),
+    timingStart: Number(raw.timingStart ?? 0),
+    timingEnd: Number(raw.timingEnd ?? 0),
+    duration: Number(raw.duration ?? 0),
+    dialogue: String(raw.dialogue ?? ''),
+    action: String(raw.action ?? ''),
+    cameraShot: cam.shot ?? 'Medium',
+    cameraAngle: cam.angle ?? 'Eye level',
+    cameraMovement: cam.movement ?? 'Static',
+    actorExpression: String(act.expression ?? 'Confident'),
+    actorEnergy: Number(act.energy ?? 7),
+    actorPace: String(act.pace ?? 'Medium'),
+    visual: String(raw.visual ?? ''),
+    audio: String(raw.audio ?? ''),
+    editMarkers: Array.isArray(markers)
+      ? JSON.stringify(markers)
+      : typeof markers === 'string'
+      ? markers
+      : '[]',
+  };
+}
 // Initial data copied from Phase 3 AUTO_SCREENPLAY
 const INITIAL_SCENES: EditableScene[] = [
   {
