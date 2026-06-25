@@ -274,6 +274,7 @@ export default function Phase1() {
         if (d.time_to_value) setTimeToValue(d.time_to_value);
         if (d.content_style) setContentStyle(d.content_style);
         if (d.on_camera_actor) setActor(d.on_camera_actor);
+        if (d.actor_brief) setActorBrief(d.actor_brief as string);
         if (d.brand_company) setCompany(d.brand_company);
                 if (d.language) setLanguage(d.language);
                         if (d.content_creator) setCreator(d.content_creator);
