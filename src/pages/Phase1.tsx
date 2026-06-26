@@ -186,6 +186,102 @@ function InlineExample({ children }: { children: React.ReactNode }) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Dynamic Niche Examples                                            */
+/* ------------------------------------------------------------------ */
+
+const NICHE_EXAMPLES: Record<string, {
+  whyNuggetPlaceholder: string;
+  whyNuggetExample: string;
+  thePointPlaceholder: string;
+  thePointExample: string;
+  whyTheyCarePlaceholder: string;
+  whyTheyCareExample: string;
+  theProofPlaceholder: string;
+  theProofExample: string;
+  takeawayPlaceholder: string;
+  takeawayExample: string;
+}> = {
+  Skincare: {
+    whyNuggetPlaceholder: '...this stat challenges everything they thought they knew about skincare.',
+    whyNuggetExample: '...this shocking fact about vitamin C oxidation changes how they see their entire routine.',
+    thePointPlaceholder: '...how to keep your vitamin C serum from oxidizing too early.',
+    thePointExample: '...how to fix your skincare routine in under 5 minutes.',
+    whyTheyCarePlaceholder: '...nobody wants to waste money on serums that stop working halfway through.',
+    whyTheyCareExample: '...73% of people throw away oxidized product they paid good money for.',
+    theProofPlaceholder: "...I've tested 20+ serums and the fridge trick always works.",
+    theProofExample: "...I've reduced product waste by 70% using this one method.",
+    takeawayPlaceholder: '...store their vitamin C serum correctly to double its lifespan.',
+    takeawayExample: '...store their vitamin C serum correctly to double its lifespan.',
+  },
+  Fitness: {
+    whyNuggetPlaceholder: '...this data proves everything they believed about cardio is backwards.',
+    whyNuggetExample: '...this study showing 12 minutes beats 60 minutes for fat loss will make them rethink their entire routine.',
+    thePointPlaceholder: '...why 80% of gym-goers waste time on exercises that don\'t build muscle.',
+    thePointExample: '...how to cut your workout time in half and get better results.',
+    whyTheyCarePlaceholder: '...they\'re spending 6 hours/week in the gym but only 2 actually matter.',
+    whyTheyCareExample: '...the average gym member wastes $480/year on a routine that doesn\'t work.',
+    theProofPlaceholder: "...I gained 8 lbs of muscle in 90 days doing only 3 exercises.",
+    theProofExample: "...my client dropped 14% body fat without a single minute of cardio.",
+    takeawayPlaceholder: '...build a 20-minute routine that outperforms a 60-minute gym session.',
+    takeawayExample: '...replace their 5-day split with a 3-day program that builds more muscle.',
+  },
+  Finance: {
+    whyNuggetPlaceholder: '...this hidden fee structure is silently eating their retirement savings.',
+    whyNuggetExample: '...this one account setting could save them $12,000 over 10 years.',
+    thePointPlaceholder: '...why keeping money in a savings account actually loses you $3,000/year.',
+    thePointExample: '...how to automate investments so your money grows while you sleep.',
+    whyTheyCarePlaceholder: '...inflation is eroding their purchasing power by 6% every year they wait.',
+    whyTheyCareExample: '...the average person loses $47,000 by age 40 just from inaction.',
+    theProofPlaceholder: "...I turned $200/month into $48,000 in 5 years using one strategy.",
+    theProofExample: "...my portfolio grew 340% using a method any beginner can copy.",
+    takeawayPlaceholder: '...set up an automated investment system in under 10 minutes tonight.',
+    takeawayExample: '...open the right account and make their first investment before bed tonight.',
+  },
+  Food: {
+    whyNuggetPlaceholder: '...this cooking mistake ruins the flavor of 90% of home-cooked meals.',
+    whyNuggetExample: '...learning that restaurants use this one trick will change how they cook forever.',
+    thePointPlaceholder: '...why salting pasta water isn\'t enough — and what chefs actually do.',
+    thePointExample: '...how to make restaurant-quality food using only a $15 pan.',
+    whyTheyCarePlaceholder: '...they\'re spending $400/month eating out when the same meal costs $6 at home.',
+    whyTheyCareExample: '...the average family wastes $1,800/year on food that goes bad before they eat it.',
+    theProofPlaceholder: "...I cut my food budget by 60% and eat better than I did before.",
+    theProofExample: "...my meal prep system feeds a family of 4 for $5.20/person/day.",
+    takeawayPlaceholder: '...make tonight\'s dinner in 15 minutes using 5 pantry ingredients.',
+    takeawayExample: '...prep 5 meals in 45 minutes this Sunday that taste better than takeout.',
+  },
+  Tech: {
+    whyNuggetPlaceholder: '...this hidden feature in their phone saves 2 hours per week instantly.',
+    whyNuggetExample: '...discovering this AI tool does in 30 seconds what takes them 3 hours manually.',
+    thePointPlaceholder: '...why 90% of people use AI tools wrong and get garbage output.',
+    thePointExample: '...how to automate 80% of your repetitive tasks using one free tool.',
+    whyTheyCarePlaceholder: '...they\'re manually doing tasks that AI can handle in 10 seconds flat.',
+    whyTheyCareExample: '...the average knowledge worker wastes 28 hours/month on tasks AI already does better.',
+    theProofPlaceholder: "...I automated my entire workflow and saved 15 hours per week.",
+    theProofExample: "...my team shipped 3x faster after I set up this one automation pipeline.",
+    takeawayPlaceholder: '...set up one AI automation tonight that saves them 5 hours this week.',
+    takeawayExample: '...install this free tool and automate their first task in under 3 minutes.',
+  },
+  Lifestyle: {
+    whyNuggetPlaceholder: '...this morning routine hack backed by neuroscience triples their productivity.',
+    whyNuggetExample: '...learning that successful people all skip this one "essential" habit will shock them.',
+    thePointPlaceholder: '...why waking up at 5am is actually destroying your productivity.',
+    thePointExample: '...how to design a morning routine that actually fits your life.',
+    whyTheyCarePlaceholder: '...they\'re burning out trying to follow routines designed for someone else\'s life.',
+    whyTheyCareExample: '...78% of people abandon productivity systems within 2 weeks because they\'re wrong for them.',
+    theProofPlaceholder: "...I restructured my mornings and gained back 2 hours of deep work daily.",
+    theProofExample: "...I went from 3 productive hours/day to 7 by changing one habit.",
+    takeawayPlaceholder: '...redesign tomorrow morning using the 3-block system starting tonight.',
+    takeawayExample: '...try the 90-minute focus block tomorrow and see the difference by lunch.',
+  },
+};
+
+const DEFAULT_EXAMPLES = NICHE_EXAMPLES['Tech']; // fallback
+
+function getNicheExamples(niche: string) {
+  return NICHE_EXAMPLES[niche] || DEFAULT_EXAMPLES;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Main Component                                                    */
 /* ------------------------------------------------------------------ */
 
@@ -234,6 +330,8 @@ export default function Phase1() {
   const [copyDescription, setCopyDescription] = useState('');
 
   const [fluffRows, setFluffRows] = useState(DEFAULT_FLUFF_ROWS);
+
+  const nicheEx = useMemo(() => getNicheExamples(niche), [niche]);
 
   const [toast, setToast] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -891,12 +989,12 @@ export default function Phase1() {
                     const val = e.target.value;
                     if (wordCount(val) <= 40) setWhyNugget(val);
                   }}
-                  placeholder="...this stat challenges everything they thought they knew about skincare."
+                  placeholder={nicheEx.whyNuggetPlaceholder}
                   className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 min-h-[80px] pt-10 resize-vertical"
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <InlineExample>Example: ...this shocking fact about vitamin C oxidation changes how they see their entire routine.</InlineExample>
+                <InlineExample>Example: {nicheEx.whyNuggetExample}</InlineExample>
                 <span
                   className={cn(
                     'text-xs',
@@ -989,7 +1087,7 @@ export default function Phase1() {
                     const val = e.target.value;
                     if (wordCount(val) <= 20) { setThePoint(val); validateTopicField(val, 'thePoint'); }
                   }}
-                  placeholder="...how to keep your vitamin C serum from oxidizing too early."
+                  placeholder={nicheEx.thePointPlaceholder}
                   className={cn(
                     'bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 pl-[130px]',
                     topicErrors.thePoint && 'border-error focus-visible:ring-error/30'
@@ -997,7 +1095,7 @@ export default function Phase1() {
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <InlineExample>Example: ...how to fix your skincare routine in under 5 minutes.</InlineExample>
+                <InlineExample>Example: {nicheEx.thePointExample}</InlineExample>
                 <span className="text-xs text-text-tertiary">{wordCount(thePoint)}/20 words</span>
               </div>
               {topicErrors.thePoint && (
@@ -1023,7 +1121,7 @@ export default function Phase1() {
                     const val = e.target.value;
                     if (wordCount(val) <= 20) { setWhyTheyCare(val); validateTopicField(val, 'whyTheyCare'); }
                   }}
-                  placeholder="...nobody wants to waste money on serums that stop working halfway through."
+                  placeholder={nicheEx.whyTheyCarePlaceholder}
                   className={cn(
                     'bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 pl-[136px]',
                     topicErrors.whyTheyCare && 'border-error focus-visible:ring-error/30'
@@ -1031,7 +1129,7 @@ export default function Phase1() {
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <InlineExample>Example: ...73% of people throw away oxidized product they paid good money for.</InlineExample>
+                <InlineExample>Example: {nicheEx.whyTheyCareExample}</InlineExample>
                 <span className="text-xs text-text-tertiary">{wordCount(whyTheyCare)}/20 words</span>
               </div>
               {topicErrors.whyTheyCare && (
@@ -1057,7 +1155,7 @@ export default function Phase1() {
                     const val = e.target.value;
                     if (wordCount(val) <= 20) { setTheProof(val); validateTopicField(val, 'theProof'); }
                   }}
-                  placeholder="...I've tested 20+ serums and the fridge trick always works."
+                  placeholder={nicheEx.theProofPlaceholder}
                   className={cn(
                     'bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 pl-[120px]',
                     topicErrors.theProof && 'border-error focus-visible:ring-error/30'
@@ -1065,7 +1163,7 @@ export default function Phase1() {
                 />
               </div>
               <div className="flex justify-between mt-1">
-                <InlineExample>Example: ...I've reduced product waste by 70% using this one method.</InlineExample>
+                <InlineExample>Example: {nicheEx.theProofExample}</InlineExample>
                 <span className="text-xs text-text-tertiary">{wordCount(theProof)}/20 words</span>
               </div>
               {topicErrors.theProof && (
@@ -1102,13 +1200,13 @@ export default function Phase1() {
                     const val = e.target.value;
                     if (wordCount(val) <= 25) setActionableTakeaway(val);
                   }}
-                  placeholder="...store their vitamin C serum correctly to double its lifespan."
+                  placeholder={nicheEx.takeawayPlaceholder}
                   className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 pl-[300px]"
                 />
               </div>
               <div className="flex justify-between mt-1">
                 <InlineExample>
-                  Example: ...store their vitamin C serum correctly to double its lifespan.
+                  Example: {nicheEx.takeawayExample}
                 </InlineExample>
                 <span className="text-xs text-text-tertiary">{wordCount(actionableTakeaway)}/25 words</span>
               </div>
