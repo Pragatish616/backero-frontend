@@ -14,6 +14,7 @@ import {
   BarChart3,
   Loader2,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { phase1 as phase1Api, phase2 as phase2Api, phase3 as phase3Api, ApiError } from '@/lib/api';
@@ -52,83 +53,7 @@ const KEY_GOLDEN_RULES = [
 /*  AUTO-GENERATED SCREENPLAY                                          */
 /* ═══════════════════════════════════════════════════════════════════ */
 
-const AUTO_SCREENPLAY: SceneBeat[] = [
-  {
-    sceneNum: 1, name: 'THE HOOK', timingStart: 0.0, timingEnd: 3.0, duration: 3.0,
-    dialogue: "I tested 47 skincare products so you don't have to.",
-    action: "(Actor: Face fills frame. Eyes wide. Holds up two bottles.)",
-    camera: { shot: "Close-up", angle: "Low angle", movement: "Handheld micro-jolt" },
-    actor: { expression: "Confident, slight smile", energy: 9, pace: "Fast" },
-    visual: 'Text overlay: "47 PRODUCTS" — 72pt, neon yellow, pop-in at 0.3s',
-    audio: "Voice onset at 0.0s. No music. Beat drop at 2.8s.",
-    editMarkers: [
-      { time: "0.0s", event: "Open on face — MCU, low angle, handheld" },
-      { time: "0.3s", event: '"47 PRODUCTS" text overlay pop-in' },
-      { time: "0.5s", event: "Actor holds up two bottles — contrast + motion" },
-      { time: "2.8s", event: "Hard cut to Scene 2" },
-    ],
-  },
-  {
-    sceneNum: 2, name: 'AUTHORITY GAP', timingStart: 3.0, timingEnd: 8.0, duration: 5.0,
-    dialogue: "And I found that 70% of vitamin C serums go bad before you finish them.",
-    action: "(Actor: Shakes one bottle. Expression shifts to serious. Holds up one finger.)",
-    camera: { shot: "Medium", angle: "Eye level", movement: "Static, B-cam ECU insert at 5s" },
-    actor: { expression: "Serious, authoritative", energy: 7, pace: "Normal" },
-    visual: 'Text overlay: "70% GO BAD" — red, bottom third, warning icon',
-    audio: "Low beat enters at 20% volume. Alert SFX at 5.5s.",
-    editMarkers: [
-      { time: "3.0s", event: "Cut to medium shot" },
-      { time: "4.0s", event: '"70% GO BAD" text overlay' },
-      { time: "5.0s", event: "B-cam ECU on bottle (pattern interrupt)" },
-      { time: "5.5s", event: "Alert sound effect" },
-    ],
-  },
-  {
-    sceneNum: 3, name: 'THE HACK', timingStart: 8.0, timingEnd: 15.0, duration: 7.0,
-    dialogue: "Store it in the fridge. It lasts twice as long.",
-    action: "(Actor: Walks to fridge. Opens door. Places bottle inside. Turns back to camera. Expression: 'That's it.')",
-    camera: { shot: "Medium", angle: "Eye level", movement: "Push-in 15% from 8-12s" },
-    actor: { expression: "Excited-conspiratorial", energy: 8, pace: "Fast -> Slow" },
-    visual: 'Text overlay: "STORE IN FRIDGE" — green, checkmark graphic, pop-in at 12.0s',
-    audio: "Music builds to 35% volume. 'Ding' SFX on checkmark at 13.0s.",
-    editMarkers: [
-      { time: "8.0s", event: "Push-in starts, actor walks to fridge" },
-      { time: "10.0s", event: "Fridge door open — B-roll insert" },
-      { time: "12.0s", event: '"STORE IN FRIDGE" text overlay' },
-      { time: "13.0s", event: "Ding on checkmark graphic" },
-    ],
-  },
-  {
-    sceneNum: 4, name: 'THE PROOF', timingStart: 15.0, timingEnd: 25.0, duration: 10.0,
-    dialogue: "I did this for 30 days. My $60 serum lasted 60 days instead of 30.",
-    action: "(Actor: Holds up calendar. Points to dates. Proud expression.)",
-    camera: { shot: "Medium -> Close-up", angle: "Eye level", movement: "Dolly in on product at 18s" },
-    actor: { expression: "Proud, confident", energy: 7, pace: "Normal" },
-    visual: '"$60 -> 60 DAYS" count-up animation on screen at 18s',
-    audio: "Steady beat at 40% volume. Cash register SFX at 22s (peak moment).",
-    editMarkers: [
-      { time: "15.0s", event: "Cut to calendar shot" },
-      { time: "18.0s", event: 'Count-up animation "$60 -> 60 DAYS"' },
-      { time: "22.0s", event: "Cash register SFX (ONE PEAK per video)" },
-      { time: "23.0s", event: "Close-up on product result" },
-    ],
-  },
-  {
-    sceneNum: 5, name: 'CTA', timingStart: 25.0, timingEnd: 30.0, duration: 5.0,
-    dialogue: "Save this before your serum goes bad.",
-    action: "(Actor: Direct to camera. Points down to save area. Urgent but friendly.)",
-    camera: { shot: "Close-up", angle: "Eye level", movement: "Static, freeze frame" },
-    actor: { expression: "Urgent-friendly", energy: 8, pace: "Normal-urgent" },
-    visual: '"SAVE THIS" pulsing text, arrow to save area, CTA card freeze at 29.5s',
-    audio: "Music fades out over 3s. Pre-CTA silence beat at 29.0s.",
-    editMarkers: [
-      { time: "25.0s", event: '"SAVE THIS" pulsing text overlay' },
-      { time: "27.0s", event: "Actor points to save area" },
-      { time: "29.0s", event: "Pre-CTA freeze — silent 1.0s (executive decision space)" },
-      { time: "29.5s", event: "Fade to end" },
-    ],
-  },
-];
+/* Hardcoded fallback removed — all screenplay data comes from the backend */
 
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  MAIN COMPONENT                                                      */
@@ -139,21 +64,19 @@ export default function Phase3() {
   const { briefId, loading: briefLoading, error: briefError, retry: retryBrief } = useBriefBootstrap();
 
   /* Auto-populated from Phase 1 (read-only) */
-  const [platform, setPlatform] = useState('YouTube Shorts');
-  const aspectRatio = '9:16';
+  const [platform, setPlatform] = useState('');
+  const [aspectRatio, setAspectRatio] = useState('9:16');
   const [lengthSec, setLengthSec] = useState(30);
-  const actorCount = 1; // Not yet tracked as a dedicated backend field
-  const language = 'EN'; // Not yet tracked as a dedicated backend field
+  const [actorCount, setActorCount] = useState(1);
+  const [actorName, setActorName] = useState('');
+  const [languageCode, setLanguageCode] = useState('EN');
 
   /* Auto-derived from Phase 2 */
-  const [contentType, setContentType] = useState('Educational');
-  const [structureName, setStructureName] = useState('Step-by-Step');
-  const [formatSkin, setFormatSkin] = useState('Demonstration');
-  const contentComplexity = 'mid';
-  const autoFormatSkin = 'Whiteboard / ABR Hybrid';
-  const actorName = actorCount >= 1 ? 'SARAH' : 'VOICEOVER';
+  const [contentType, setContentType] = useState('');
+  const [structureName, setStructureName] = useState('');
+  const [formatSkin, setFormatSkin] = useState('');
 
-  const [scenes, setScenes] = useState<SceneBeat[]>(AUTO_SCREENPLAY);
+  const [scenes, setScenes] = useState<SceneBeat[]>([]);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
@@ -167,8 +90,12 @@ export default function Phase3() {
       .get(briefId)
       .then((res) => {
         if (res.data.platform) setPlatform(res.data.platform);
-        if (res.data.time_to_value) {
-          const parsedLen = parseInt(res.data.time_to_value, 10);
+        if (res.data.aspect_ratio) setAspectRatio(res.data.aspect_ratio as string);
+        if (res.data.number_of_actors) setActorCount(res.data.number_of_actors as number);
+        if (res.data.on_camera_actor) setActorName(res.data.on_camera_actor as string);
+        if (res.data.language) setLanguageCode(res.data.language as string);
+        if (res.data.estimated_length) {
+          const parsedLen = parseInt(res.data.estimated_length as string, 10);
           if (!Number.isNaN(parsedLen)) setLengthSec(parsedLen);
         }
       })
@@ -222,7 +149,7 @@ export default function Phase3() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [briefId]);
 
-  const totalRuntime = scenes[scenes.length - 1]?.timingEnd || 30;
+  const totalRuntime = scenes.length > 0 ? (scenes[scenes.length - 1]?.timingEnd || 0) : 0;
   const totalWords = scenes.reduce((sum, s) => sum + s.dialogue.split(/\s+/).filter(Boolean).length, 0);
   const cutCount = scenes.reduce((sum, s) => sum + s.editMarkers.length, 0);
 
@@ -281,7 +208,7 @@ export default function Phase3() {
             <div className="mt-2 flex items-center gap-3">
               <p className="text-xs text-text-tertiary">
                 Brief ID: <span className="font-mono">{briefId}</span>
-                {!isLive && !generating ? ' — showing example screenplay' : ''}
+                {generating ? ' — generating…' : ''}
               </p>
               <button
                 onClick={() => generate(briefId)}
@@ -311,10 +238,10 @@ export default function Phase3() {
               {lengthSec}s
             </span>
             <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-bg-tertiary text-text-tertiary border border-border-subtle">
-              Complexity: {contentComplexity}
+              Complexity: {contentType || '—'}
             </span>
             <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-bg-tertiary text-text-tertiary border border-border-subtle">
-              Skin: {autoFormatSkin}
+              Format: {formatSkin || '—'}
             </span>
           </div>
 
@@ -334,11 +261,52 @@ export default function Phase3() {
               {actorCount} actor{actorCount > 1 ? 's' : ''}
             </span>
             <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-bg-tertiary text-text-secondary border border-border-subtle">
-              {language}
+              {languageCode}
             </span>
           </div>
         </div>
 
+        {/* ═══════════════ Loading / Empty State ═══════════════ */}
+        {generating && scenes.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-10 h-10 animate-spin mb-4" style={{ color: pageAccent }} />
+            <p className="text-lg font-semibold text-text-primary mb-1">Generating your screenplay…</p>
+            <p className="text-sm text-text-secondary">The AI director is crafting a viral-optimized script from your Phase 1 &amp; 2 inputs.</p>
+          </div>
+        )}
+
+        {!generating && scenes.length === 0 && !genError && (
+          <div className="flex flex-col items-center justify-center py-20 rounded-xl border border-border-subtle bg-bg-secondary">
+            <Camera className="w-10 h-10 text-text-tertiary mb-4" />
+            <p className="text-lg font-semibold text-text-primary mb-1">No screenplay yet</p>
+            <p className="text-sm text-text-secondary mb-4">Click below to generate your AI-powered screenplay from Phase 1 &amp; 2 data.</p>
+            <button
+              onClick={() => briefId && generate(briefId)}
+              disabled={!briefId}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium text-text-inverse disabled:opacity-40"
+              style={{ backgroundColor: pageAccent }}
+            >
+              <Sparkles className="w-4 h-4" />
+              Generate Screenplay
+            </button>
+          </div>
+        )}
+
+        {genError && scenes.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 rounded-xl border border-error/30 bg-error/5">
+            <AlertCircle className="w-8 h-8 text-error mb-3" />
+            <p className="text-sm text-error mb-3">{genError}</p>
+            <button
+              onClick={() => briefId && generate(briefId)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-bg-tertiary border border-border-subtle text-text-primary hover:bg-bg-quaternary transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {scenes.length > 0 && (<>
         {/* ═══════════════ Quick Jump Nav (sticky) ═══════════════ */}
         <div className="sticky top-0 z-30 mb-8 rounded-xl border border-border-subtle bg-[#151821]/95 backdrop-blur-sm p-3">
           <div className="flex items-center gap-2 overflow-x-auto">
@@ -504,6 +472,7 @@ export default function Phase3() {
         </div>
 
         {/* ═══════════════ Footer ═══════════════ */}
+        </>)}
         <div className="flex items-center justify-between pt-8 mt-8 border-t border-border-subtle">
           <button
             onClick={handleBack}
