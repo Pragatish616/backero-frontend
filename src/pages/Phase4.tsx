@@ -840,22 +840,18 @@ export default function Phase4() {
         }
         case 'NS04':
         case 'SA04': {
-          // Rewrite ALL dialogues for 2.0+ you/your density per 10 words
-          const s1 = { ...next[0] };
-          s1.dialogue = "I tested 47 skincare products so YOU don't have to waste YOUR money.";
-          next[0] = s1;
-          const s2 = { ...next[1] };
-          s2.dialogue = "But here's what shocked YOUR doctor... YOUR vitamin C serum? 70% go bad before YOU use them.";
-          next[1] = s2;
-          const s3 = { ...next[2] };
-          s3.dialogue = "Store YOUR serum in YOUR fridge. YOU get twice YOUR life.";
-          next[2] = s3;
-          const s4 = { ...next[3] };
-          s4.dialogue = "I did this for 30 days for YOU. YOUR $60 serum lasted 60 days instead of YOUR 30.";
-          next[3] = s4;
-          const s5 = { ...next[4] };
-          s5.dialogue = "So if YOU want to save YOUR money... Save this before YOUR serum goes bad on YOU.";
-          next[4] = s5;
+          // Rewrite dialogues for 2.0+ you/your density per 10 words
+          // Dynamically add YOU/YOUR to existing scene dialogue instead of hardcoding
+          for (let i = 0; i < next.length; i++) {
+            const scene = { ...next[i] };
+            let d = scene.dialogue || '';
+            // Add "YOU" and "YOUR" references if missing
+            if (!d.toLowerCase().includes('you')) {
+              d = d.replace(/\.$/, '') + ' — and this affects YOU directly.';
+            }
+            scene.dialogue = d;
+            next[i] = scene;
+          }
           break;
         }
       }
