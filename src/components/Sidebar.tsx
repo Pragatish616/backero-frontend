@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { Film, LayoutDashboard, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useActiveBrief } from '@/lib/activeBrief';
 
 const phaseColors: Record<string, string> = {
   '/': '#6366F1',
@@ -24,31 +25,45 @@ const navItems = [
   { path: '/phase/6', label: 'Phase 6: Node Editor', phase: 6 },
 ];
 
-// Sample status for demo
-const phaseStatus: Record<number, 'completed' | 'in-progress' | 'pending' | 'not-started'> = {
-  0: 'in-progress',
-  1: 'completed',
-  2: 'completed',
-  3: 'in-progress',
-  4: 'pending',
-  5: 'not-started',
-};
+// Phase status is now dynamically computed from the active brief
 
 export function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const { briefId } = useActiveBrief();
+  const [currentPhase, setCurrentPhase] = useState(1);
+  const [briefStatus, setBriefStatus] = useState('Draft');
+
+  useEffect(() => {
+    if (!briefId) return;
+    const fetchBrief = async () => {
+      try {
+        const { API_BASE_URL } = await import('@/lib/api');
+        const res = await fetch(`${API_BASE_URL}/api/dashboard/briefs?limit=50`);
+        if (res.ok) {
+          const data = await res.json();
+          const brief = (data.briefs || []).find((b: { id: string }) => b.id === briefId);
+          if (brief) {
+            setCurrentPhase(brief.current_phase || 1);
+            setBriefStatus(brief.status || 'Draft');
+          }
+        }
+      } catch { /* ignore */ }
+    };
+    fetchBrief();
+  }, [briefId, location.pathname]);
+
+  const getStatusDot = (phase: number) => {
+    if (phase === 0) return { color: '#6366F1', label: 'Dashboard' };
+    if (phase < currentPhase) return { color: '#22C55E', label: 'Completed' };
+    if (phase === currentPhase) return { color: phaseColors[`/phase/${phase}`] || '#6366F1', label: 'In Progress' };
+    if (phase === currentPhase + 1) return { color: '#F59E0B', label: 'Next' };
+    return { color: '#5C6370', label: 'Not Started' };
+  };
 
   const currentPath = location.pathname;
   const accentColor = phaseColors[currentPath] || '#6366F1';
-
-  const getStatusDot = (phase: number) => {
-    const status = phaseStatus[phase];
-    if (status === 'completed') return { color: '#22C55E', label: 'Completed' };
-    if (status === 'in-progress') return { color: phaseColors[`/phase/${phase}`] || '#6366F1', label: 'In Progress' };
-    if (status === 'pending') return { color: '#F59E0B', label: 'Pending' };
-    return { color: '#5C6370', label: 'Not Started' };
-  };
 
   return (
     <aside
