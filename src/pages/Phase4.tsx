@@ -871,7 +871,7 @@ function BrainRegionMatrix() {
 export default function Phase4() {
   const navigate = useNavigate();
   const { briefId, loading: briefLoading, error: briefError, retry: retryBrief } = useBriefBootstrap();
-  const [checks, setChecks] = useState<CheckItem[]>(INITIAL_CHECKS);
+  const [checks, setChecks] = useState<CheckItem[]>([]);
   const [runningChecks, setRunningChecks] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
   const [liveScore, setLiveScore] = useState<number | null>(null);
@@ -879,17 +879,12 @@ export default function Phase4() {
   const [advancing, setAdvancing] = useState(false);
 
   /* ═══════ EDITABLE SCENE STATE ═══════ */
-  const [scenes, setScenes] = useState<EditableScene[]>(INITIAL_SCENES);
+  const [scenes, setScenes] = useState<EditableScene[]>([]);
   const [appliedFixes, setAppliedFixes] = useState<string[]>([]);
   const [showSceneEditor, setShowSceneEditor] = useState(false);
 
-  /* Pull the real Phase 3 screenplay + run the backend's rule engine
-   * (15 server-side checks) so the score/verdict shown here reflects the
-   * actual generated scenes, not just the bundled skincare-serum demo.
-   * Backend checks (GR00x/QG00x/NS00x/CT00x — 3-digit IDs) are appended
-   * to the rich 2-digit demo check list rather than replacing it, since
-   * the IDs never collide and the demo's interactive "apply fix" UX is
-   * worth keeping for exploration. */
+  /* Run backend quality checks against the actual Phase 3 screenplay.
+   * All check data comes from the server — no client-side demo fallbacks. */
   const runBackendChecks = useCallback((id: string) => {
     setRunningChecks(true);
     setRunError(null);
@@ -900,17 +895,14 @@ export default function Phase4() {
         setLiveScore((res.quality_score as number) ?? null);
         setLiveVerdict((res.overall_verdict as 'SHIP' | 'REVISE' | 'REJECT') ?? null);
         if (liveChecks.length > 0) {
-          setChecks((prev) => {
-            const demoOnly = prev.filter((c) => !liveChecks.some((lc) => lc.id === c.id));
-            return [...liveChecks, ...demoOnly];
-          });
+          setChecks(liveChecks);
         }
       })
       .catch((err: unknown) => {
         setRunError(
           err instanceof ApiError
-            ? `${err.message} (showing example checks instead)`
-            : 'Could not run live checks — backend unreachable (showing example checks instead)'
+            ? err.message
+            : 'Could not run quality checks — is the backend running?'
         );
       })
       .finally(() => setRunningChecks(false));
@@ -920,7 +912,7 @@ export default function Phase4() {
     if (briefId) runBackendChecks(briefId);
   }, [briefId, runBackendChecks]);
 
-  // Load the real Phase 3 screenplay to replace hardcoded INITIAL_SCENES
+  // Load the real Phase 3 screenplay
   useEffect(() => {
     if (!briefId) return;
     phase3Api
@@ -931,9 +923,7 @@ export default function Phase4() {
           setScenes(rawScenes.map((s) => mapPhase3Scene(s as Record<string, unknown>)));
         }
       })
-      .catch(() => {
-        // Keep INITIAL_SCENES as fallback — silent fail
-      });
+      .catch(() => {});
   }, [briefId]);
 
   const handleOverride = useCallback((checkId: string) => {
