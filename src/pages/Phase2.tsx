@@ -190,24 +190,55 @@ export default function Phase2() {
   const [aiRecommendedType] = useState('educational');
   const [platform, setPlatform] = useState<PlatformOption>('TikTok');
   const [selectedCombo, setSelectedCombo] = useState<string | null>(null);
-  const [ctaText, setCtaText] = useState('Follow for more skincare hacks');
+  const [ctaText, setCtaText] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
   /* ── Hook state ── */
   const [hooks, setHooks] = useState<Record<string, HookState>>({
-    visual: { status: 'pending', content: 'Close-up of woman holding two serum bottles, shocked expression', original: 'Close-up of woman holding two serum bottles, shocked expression', rating: 'GOOD', visualQuality: 'GOOD' },
-    written: { status: 'pending', content: 'I wasted $2,000 on THIS', original: 'I wasted $2,000 on THIS', rating: 'GOOD' },
-    audio: { status: 'pending', content: 'Energetic, slightly angry: "Stop buying serums!"', original: 'Energetic, slightly angry: "Stop buying serums!"', rating: 'GOOD' },
+    visual: { status: 'pending', content: '', original: '', rating: 'GOOD', visualQuality: 'GOOD' },
+    written: { status: 'pending', content: '', original: '', rating: 'GOOD' },
+    audio: { status: 'pending', content: '', original: '', rating: 'GOOD' },
   });
 
   const [editText, setEditText] = useState<Record<string, string>>({});
 
   const allHooksApproved = Object.values(hooks).every((h) => h.status === 'approved');
 
-  /* ── Load existing Phase 2 data (and Phase 1's platform) for this brief ── */
+  /* ── Load existing Phase 2 data (and Phase 1's platform + hook) for this brief ── */
   useEffect(() => {
     if (!briefId) return;
+
+    // Load Phase 1 data to populate hooks from the selected nugget / hook_text
+    import('@/lib/api').then(({ phase1: p1Api }) => {
+      p1Api.get(briefId).then((res) => {
+        const d = res.data;
+        const hookText = d.hook_text || '';
+        const actor = d.on_camera_actor || 'the creator';
+        const nuggets = d.knowledge_nuggets || [];
+        const selectedIdx = d.selected_nugget_index;
+        const selectedNugget = selectedIdx != null && nuggets[selectedIdx] ? nuggets[selectedIdx] : null;
+
+        setHooks((prev) => ({
+          visual: {
+            ...prev.visual,
+            content: prev.visual.content || `Close-up of ${actor} reacting to ${hookText || 'the topic'}`,
+            original: prev.visual.original || `Close-up of ${actor} reacting to ${hookText || 'the topic'}`,
+          },
+          written: {
+            ...prev.written,
+            content: prev.written.content || hookText || (selectedNugget?.text ?? ''),
+            original: prev.written.original || hookText || (selectedNugget?.text ?? ''),
+          },
+          audio: {
+            ...prev.audio,
+            content: prev.audio.content || `Energetic delivery: "${hookText || 'Hook line here'}"`,
+            original: prev.audio.original || `Energetic delivery: "${hookText || 'Hook line here'}"`,
+          },
+        }));
+      }).catch(() => {});
+    });
+
     phase2Api
       .get(briefId)
       .then((res) => {
@@ -812,7 +843,7 @@ export default function Phase2() {
                 <div className="p-3 rounded-lg bg-bg-tertiary border border-border-subtle">
                   <p className="text-[10px] text-text-tertiary mb-1 uppercase tracking-wide">Preview</p>
                   <p className="text-sm text-text-primary">
-                    &ldquo;{ctaText || 'Follow for more skincare hacks'}&rdquo;
+                    &ldquo;{ctaText || 'Enter your call to action above'}&rdquo;
                   </p>
                 </div>
               </div>
