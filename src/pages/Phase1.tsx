@@ -73,10 +73,10 @@ const COPY_ELEMENTS = [
   { label: 'Format', icon: LayoutGrid, desc: 'Scene layout, shot sequence' },
 ];
 
-const FLUFF_ROWS = [
-  { fluff: '"This serum is amazing"', specific: '"This serum reduced my dark spots in 14 days"' },
-  { fluff: '"You should take care of your skin"', specific: '"Store your vitamin C in the fridge — it lasts 2x longer"' },
-  { fluff: '"Everyone is talking about this"', specific: '"This went viral on TikTok with 2.4M views"' },
+const DEFAULT_FLUFF_ROWS = [
+  { fluff: '"This tip is amazing"', specific: '"This technique cut my costs by 43% in 2 weeks"' },
+  { fluff: '"You should try this method"', specific: '"I tested 12 methods — only this one actually worked"' },
+  { fluff: '"Everyone is talking about this"', specific: '"This hack got 2.4M views because it saves $200/month"' },
 ];
 
 /* Hardcoded nugget fallback removed — nuggets come from AI extraction or saved data only */
@@ -233,6 +233,8 @@ export default function Phase1() {
   const [copyElement, setCopyElement] = useState('');
   const [copyDescription, setCopyDescription] = useState('');
 
+  const [fluffRows, setFluffRows] = useState(DEFAULT_FLUFF_ROWS);
+
   const [toast, setToast] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadingExisting, setLoadingExisting] = useState(false);
@@ -287,6 +289,19 @@ export default function Phase1() {
       })
       .finally(() => setLoadingExisting(false));
   }, [briefId]);
+
+  /* --- fetch niche-specific fluff examples when niche changes --- */
+  useEffect(() => {
+    if (!briefId || !niche) return;
+    phase1Api
+      .fluffExamples(briefId, niche, thePoint)
+      .then((res) => {
+        if (res.examples && res.examples.length >= 3) {
+          setFluffRows(res.examples);
+        }
+      })
+      .catch(() => { /* keep defaults */ });
+  }, [briefId, niche]);
 
   /* --- computed --- */
   const researchCharCount = research.length;
@@ -1185,7 +1200,7 @@ export default function Phase1() {
                   </div>
                 </div>
                 {/* Table Rows */}
-                {FLUFF_ROWS.map((row, i) => (
+                {fluffRows.map((row, i) => (
                   <motion.div
                     key={i}
                     className={cn(
