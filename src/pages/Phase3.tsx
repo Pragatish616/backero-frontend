@@ -79,7 +79,6 @@ export default function Phase3() {
   const [scenes, setScenes] = useState<SceneBeat[]>([]);
   const [generating, setGenerating] = useState(false);
   const [genError, setGenError] = useState<string | null>(null);
-  const [isLive, setIsLive] = useState(false);
 
   const pageAccent = '#EF4444';
 
@@ -120,7 +119,6 @@ export default function Phase3() {
         const generatedScenes = (res.scenes as SceneBeat[]) ?? [];
         if (generatedScenes.length > 0) {
           setScenes(generatedScenes);
-          setIsLive(true);
         }
       })
       .catch((err: unknown) => {
@@ -139,7 +137,6 @@ export default function Phase3() {
       .then((res) => {
         if (res.generated && Array.isArray(res.scenes) && res.scenes.length > 0) {
           setScenes(res.scenes as SceneBeat[]);
-          setIsLive(true);
           setGenerating(false);
         } else {
           generate(briefId);
