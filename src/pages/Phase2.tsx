@@ -631,9 +631,9 @@ export default function Phase2() {
 
           <div className="space-y-4 ml-11">
             {([
-              { key: 'visual', label: 'Visual Hook', icon: Eye, iconColor: '#EF4444', example: 'Close-up of woman holding two serum bottles, shocked expression' },
-              { key: 'written', label: 'Written Hook', icon: Type, iconColor: '#06D6A0', example: 'I wasted $2,000 on THIS' },
-              { key: 'audio', label: 'Audio Hook', icon: Volume2, iconColor: '#8B5CF6', example: 'Energetic, slightly angry: "Stop buying serums!"' },
+              { key: 'visual', label: 'Visual Hook', icon: Eye, iconColor: '#EF4444' },
+              { key: 'written', label: 'Written Hook', icon: Type, iconColor: '#06D6A0' },
+              { key: 'audio', label: 'Audio Hook', icon: Volume2, iconColor: '#8B5CF6' },
             ] as const).map((hookDef) => {
               const key = hookDef.key;
               const hook = hooks[key];
