@@ -33,7 +33,6 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const { briefId } = useActiveBrief();
   const [currentPhase, setCurrentPhase] = useState(1);
-  const [briefStatus, setBriefStatus] = useState('Draft');
 
   useEffect(() => {
     if (!briefId) return;
@@ -46,7 +45,6 @@ export function Sidebar() {
           const brief = (data.briefs || []).find((b: { id: string }) => b.id === briefId);
           if (brief) {
             setCurrentPhase(brief.current_phase || 1);
-            setBriefStatus(brief.status || 'Draft');
           }
         }
       } catch { /* ignore */ }
