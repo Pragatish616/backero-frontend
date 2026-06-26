@@ -73,11 +73,7 @@ const COPY_ELEMENTS = [
   { label: 'Format', icon: LayoutGrid, desc: 'Scene layout, shot sequence' },
 ];
 
-const DEFAULT_FLUFF_ROWS = [
-  { fluff: '"This tip is amazing"', specific: '"This technique cut my costs by 43% in 2 weeks"' },
-  { fluff: '"You should try this method"', specific: '"I tested 12 methods — only this one actually worked"' },
-  { fluff: '"Everyone is talking about this"', specific: '"This hack got 2.4M views because it saves $200/month"' },
-];
+/* DEFAULT_FLUFF_ROWS removed — all fluff examples are now AI-generated per niche+topic+language */
 
 /* Hardcoded nugget fallback removed — nuggets come from AI extraction or saved data only */
 
@@ -329,7 +325,10 @@ export default function Phase1() {
   const [copyElement, setCopyElement] = useState('');
   const [copyDescription, setCopyDescription] = useState('');
 
-  const [fluffRows, setFluffRows] = useState(DEFAULT_FLUFF_ROWS);
+  type FluffRow = { fluff: string; specific: string };
+  const [fluffRows, setFluffRows] = useState<FluffRow[]>([]);
+  const [fluffLoading, setFluffLoading] = useState(false);
+  const [fluffGenerated, setFluffGenerated] = useState(false);
 
   const nicheEx = useMemo(() => getNicheExamples(niche), [niche]);
 
@@ -388,18 +387,21 @@ export default function Phase1() {
       .finally(() => setLoadingExisting(false));
   }, [briefId]);
 
-  /* --- fetch niche-specific fluff examples when niche changes --- */
-  useEffect(() => {
-    if (!briefId || !niche) return;
+  /* --- fetch AI fluff examples on demand --- */
+  const fetchFluffExamples = useCallback(() => {
+    if (!briefId) return;
+    setFluffLoading(true);
     phase1Api
       .fluffExamples(briefId, niche, thePoint)
       .then((res) => {
         if (res.examples && res.examples.length >= 3) {
           setFluffRows(res.examples);
+          setFluffGenerated(true);
         }
       })
-      .catch(() => { /* keep defaults */ });
-  }, [briefId, niche]);
+      .catch(() => {})
+      .finally(() => setFluffLoading(false));
+  }, [briefId, niche, thePoint]);
 
   /* --- computed --- */
   const researchCharCount = research.length;
@@ -1276,54 +1278,82 @@ export default function Phase1() {
               </div>
             </div>
 
-            {/* Fluff Check — Inline */}
+            {/* Fluff Check — Rebuilt */}
             <div className="mb-5">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-base-medium text-text-primary">Fluff Check</h3>
-                <p className="text-xs text-text-tertiary">
-                  Check your writing against these examples
-                </p>
-              </div>
-              <div className="overflow-hidden rounded-xl border border-border-subtle">
-                {/* Table Header */}
-                <div
-                  className="grid grid-cols-2 gap-0 text-sm-medium text-text-secondary uppercase"
-                  style={{ letterSpacing: '0.05em', backgroundColor: '#252932' }}
+                <button
+                  onClick={fetchFluffExamples}
+                  disabled={fluffLoading || !niche}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border-subtle bg-bg-tertiary hover:bg-bg-quaternary disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-text-secondary"
                 >
-                  <div className="px-4 py-3 flex items-center gap-2 border-r border-border-subtle">
-                    <XCircle size={14} className="text-error" /> FLUFF (Bad)
-                  </div>
-                  <div className="px-4 py-3 flex items-center gap-2">
-                    <CheckCircle2 size={14} className="text-success" /> SPECIFIC (Good)
-                  </div>
-                </div>
-                {/* Table Rows */}
-                {fluffRows.map((row, i) => (
-                  <motion.div
-                    key={i}
-                    className={cn(
-                      'grid grid-cols-2 gap-0 text-sm',
-                      i % 2 === 1 && 'bg-[rgba(255,255,255,0.015)]'
-                    )}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, ease: easeOut, delay: i * 0.04 }}
-                  >
-                    <div
-                      className="px-4 py-3 border-r border-border-subtle text-text-secondary line-through"
-                      style={{ borderLeft: '3px solid #EF4444' }}
-                    >
-                      {row.fluff}
-                    </div>
-                    <div
-                      className="px-4 py-3 text-text-primary"
-                      style={{ borderLeft: '3px solid #22C55E' }}
-                    >
-                      {row.specific}
-                    </div>
-                  </motion.div>
-                ))}
+                  {fluffLoading ? (
+                    <Loader2 size={11} className="animate-spin" />
+                  ) : (
+                    <Sparkles size={11} />
+                  )}
+                  {fluffLoading ? 'Generating…' : fluffGenerated ? 'Regenerate for this topic' : 'Generate examples for my topic'}
+                </button>
               </div>
+
+              {!fluffLoading && fluffRows.length === 0 && (
+                <div className="rounded-xl border border-border-subtle bg-bg-secondary flex flex-col items-center justify-center py-8 px-4 text-center">
+                  <Sparkles size={20} className="text-text-tertiary mb-2" />
+                  <p className="text-sm text-text-secondary mb-1">
+                    {niche
+                      ? `Click "Generate examples" to get AI examples for ${niche}${thePoint ? \` — \${thePoint.slice(0, 40)}\` : ''}`
+                      : 'Select a niche first, then generate examples'}
+                  </p>
+                  <p className="text-xs text-text-tertiary">Examples will be in your selected language</p>
+                </div>
+              )}
+
+              {fluffLoading && (
+                <div className="overflow-hidden rounded-xl border border-border-subtle animate-pulse">
+                  <div className="grid grid-cols-2 gap-0 bg-[#252932]">
+                    <div className="px-4 py-3 h-10 border-r border-border-subtle" />
+                    <div className="px-4 py-3 h-10" />
+                  </div>
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="grid grid-cols-2 gap-0 border-t border-border-subtle">
+                      <div className="px-4 py-4 border-r border-border-subtle"><div className="h-3 bg-bg-tertiary rounded w-3/4" /></div>
+                      <div className="px-4 py-4"><div className="h-3 bg-bg-tertiary rounded w-5/6 mb-1" /><div className="h-3 bg-bg-tertiary rounded w-2/3" /></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {!fluffLoading && fluffRows.length > 0 && (
+                <div className="overflow-hidden rounded-xl border border-border-subtle">
+                  <div
+                    className="grid grid-cols-2 gap-0 text-sm-medium text-text-secondary uppercase"
+                    style={{ letterSpacing: '0.05em', backgroundColor: '#252932' }}
+                  >
+                    <div className="px-4 py-3 flex items-center gap-2 border-r border-border-subtle">
+                      <XCircle size={14} className="text-error" /> FLUFF (Bad)
+                    </div>
+                    <div className="px-4 py-3 flex items-center gap-2">
+                      <CheckCircle2 size={14} className="text-success" /> SPECIFIC (Good)
+                    </div>
+                  </div>
+                  {fluffRows.map((row, i) => (
+                    <motion.div
+                      key={i}
+                      className={cn('grid grid-cols-2 gap-0 text-sm', i % 2 === 1 && 'bg-[rgba(255,255,255,0.015)]')}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, ease: easeOut, delay: i * 0.06 }}
+                    >
+                      <div className="px-4 py-3 border-r border-border-subtle text-text-secondary line-through" style={{ borderLeft: '3px solid #EF4444' }}>
+                        {row.fluff}
+                      </div>
+                      <div className="px-4 py-3 text-text-primary" style={{ borderLeft: '3px solid #22C55E' }}>
+                        {row.specific}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Self-check questions */}
