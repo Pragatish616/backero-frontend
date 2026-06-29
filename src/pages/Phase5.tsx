@@ -117,20 +117,20 @@ const DEFAULT_SCREENPLAY_SCENES: SceneData[] = [
 /*  Metadata                                                           */
 /* ------------------------------------------------------------------ */
 
-const DEFAULT_META = {
-  title: 'The Vitamin C Mistake Nobody Talks About',
-  actor: 'Sarah K.',
-  company: 'GlowLab',
-  platform: 'Instagram',
-  format: 'Talking-Head / ABR Hybrid',
-  contentType: 'Educational',
-  structure: 'D \u2014 Shocking Fact',
-  runtime: '30s',
-  scenes: 5,
-  cuts: 4,
-  words: 42,
-  verdict: 'SHIP' as 'SHIP' | 'REVISE' | 'REJECT',
-  score: 87,
+const EMPTY_META = {
+  title: '',
+  actor: '',
+  company: '',
+  platform: '',
+  format: '',
+  contentType: '',
+  structure: '',
+  runtime: '0s',
+  scenes: 0,
+  cuts: 0,
+  words: 0,
+  verdict: '' as 'SHIP' | 'REVISE' | 'REJECT' | '',
+  score: 0,
   aspectRatio: '9:16',
   language: 'English',
 };
@@ -333,7 +333,7 @@ export default function Phase5() {
   const [printFilter, setPrintFilter] = useState<string>('all');
 
   const [scenes, setScreenplayScenes] = useState<SceneData[]>([]);
-  const [meta, setMeta] = useState(DEFAULT_META);
+  const [meta, setMeta] = useState(EMPTY_META);
   const [goldenRules, setGoldenRules] = useState<GoldenRule[]>(DEFAULT_GOLDEN_RULES);
   const [isLive, setIsLive] = useState(false);
   const [dataLoading, setDataLoading] = useState(true);
@@ -357,24 +357,23 @@ export default function Phase5() {
           setScreenplayScenes(DEFAULT_SCREENPLAY_SCENES);
         }
         if (liveMeta) {
-          setMeta((prev) => ({
-            ...prev,
-            title: String(liveMeta.title || prev.title),
-            actor: String(liveMeta.actor || prev.actor),
-            company: String(liveMeta.company || prev.company),
-            platform: String(liveMeta.platform || prev.platform),
-            format: String(liveMeta.format || prev.format),
-            contentType: String(liveMeta.contentType || prev.contentType),
-            structure: String(liveMeta.structure || prev.structure),
-            runtime: String(liveMeta.runtime || prev.runtime),
-            scenes: Number(liveMeta.scenes ?? prev.scenes),
-            cuts: Number(liveMeta.cuts ?? prev.cuts),
-            words: Number(liveMeta.words ?? prev.words),
-            verdict: (liveMeta.verdict as 'SHIP' | 'REVISE' | 'REJECT') || prev.verdict,
-            score: Number(liveMeta.score ?? prev.score),
-            aspectRatio: String(liveMeta.aspectRatio || prev.aspectRatio),
-            language: String(liveMeta.language || prev.language),
-          }));
+          setMeta({
+            title: String(liveMeta.title ?? ''),
+            actor: String(liveMeta.actor ?? ''),
+            company: String(liveMeta.company ?? ''),
+            platform: String(liveMeta.platform ?? ''),
+            format: String(liveMeta.format ?? ''),
+            contentType: String(liveMeta.contentType ?? ''),
+            structure: String(liveMeta.structure ?? ''),
+            runtime: String(liveMeta.runtime ?? '0s'),
+            scenes: Number(liveMeta.scenes ?? 0),
+            cuts: Number(liveMeta.cuts ?? 0),
+            words: Number(liveMeta.words ?? 0),
+            verdict: (liveMeta.verdict as 'SHIP' | 'REVISE' | 'REJECT' | '') || '',
+            score: Number(liveMeta.score ?? 0),
+            aspectRatio: String(liveMeta.aspectRatio ?? '9:16') || '9:16',
+            language: String(liveMeta.language ?? 'English') || 'English',
+          });
         }
         if (liveRules.length > 0) {
           setGoldenRules(liveRules as unknown as GoldenRule[]);
