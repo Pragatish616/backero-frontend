@@ -1083,6 +1083,34 @@ export default function Phase5() {
     return <PhaseLoadingScreen phase={5} />;
   }
 
+  /* ── Empty state: no live data yet ── */
+  if (!isLive && !loadError) {
+    return (
+      <Layout>
+        <div className="max-w-xl mx-auto px-4 py-20 text-center">
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
+            style={{ backgroundColor: `${ACCENT}22` }}
+          >
+            <Package size={28} style={{ color: ACCENT }} />
+          </div>
+          <h2 className="text-2xl font-bold text-text-primary mb-3">Production Pack Not Ready</h2>
+          <p className="text-text-secondary mb-6">
+            Your screenplay needs to pass Phase 4 quality checks before the production pack can be generated.
+            Head back to Phase 4, run checks, and click "Approve &amp; Export to Phase 5."
+          </p>
+          <button
+            onClick={() => navigate('/phase/4')}
+            className="px-6 py-3 rounded-lg text-sm font-bold transition-all"
+            style={{ backgroundColor: ACCENT, color: '#fff' }}
+          >
+            Go to Phase 4
+          </button>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <PrintStyles />
