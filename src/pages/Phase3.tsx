@@ -19,6 +19,8 @@ import {
 import { Layout } from '@/components/Layout';
 import { phase1 as phase1Api, phase2 as phase2Api, phase3 as phase3Api, ApiError } from '@/lib/api';
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
+import AIOperationOverlay from '@/components/AIOperationOverlay';
 
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  TYPES                                                              */
@@ -161,6 +163,11 @@ export default function Phase3() {
       });
   };
 
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading) {
+    return <PhaseLoadingScreen phase={3} />;
+  }
+
   return (
     <Layout>
       <div className="max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -265,10 +272,17 @@ export default function Phase3() {
 
         {/* ═══════════════ Loading / Empty State ═══════════════ */}
         {generating && scenes.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-10 h-10 animate-spin mb-4" style={{ color: pageAccent }} />
-            <p className="text-lg font-semibold text-text-primary mb-1">Generating your screenplay…</p>
-            <p className="text-sm text-text-secondary">The AI director is crafting a viral-optimized script from your Phase 1 &amp; 2 inputs.</p>
+          <div className="relative rounded-xl border border-border-subtle bg-bg-secondary" style={{ minHeight: 280 }}>
+            <AIOperationOverlay
+              active={generating}
+              accent={pageAccent}
+              stages={[
+                { text: 'Reading your Phase 1 & 2 inputs…' },
+                { text: 'AI director is crafting scenes…' },
+                { text: 'Optimizing for viral structure…' },
+                { text: 'Finalizing screenplay beats…' },
+              ]}
+            />
           </div>
         )}
 
@@ -321,7 +335,16 @@ export default function Phase3() {
         </div>
 
         {/* ═══════════════ ALL SCENES — Continuous Scroll ═══════════════ */}
-        <div className="space-y-8">
+        <div className="space-y-8 relative">
+          <AIOperationOverlay
+            active={generating}
+            accent={pageAccent}
+            stages={[
+              { text: 'Regenerating scenes…' },
+              { text: 'AI is rewriting your screenplay…' },
+              { text: 'Optimizing scene transitions…' },
+            ]}
+          />
           {scenes.map((scene) => (
             <motion.section
               key={scene.sceneNum}
