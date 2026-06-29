@@ -17,6 +17,8 @@ import {
 } from '@/lib/nodeEditorData';
 import { phase6 as phase6Api, ApiError } from '@/lib/api';
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
+import AIOperationOverlay from '@/components/AIOperationOverlay';
 
 const ACCENT = '#F59E0B';
 const CANVAS_W = 1600;
@@ -463,6 +465,11 @@ export default function Phase6() {
   /*  RENDER                                                          */
   /* ═══════════════════════════════════════════════════════════════ */
 
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading) {
+    return <PhaseLoadingScreen phase={6} />;
+  }
+
   return (
     <div className="min-h-[100dvh] bg-bg-primary flex flex-col">
       {/* ── Top Bar ── */}
@@ -588,6 +595,15 @@ export default function Phase6() {
             className="flex-1 overflow-hidden bg-bg-primary relative"
             onClick={() => { setSelectedNodeId(null); setSelectedEdgeId(null); }}
           >
+            <AIOperationOverlay
+              active={graphLoading}
+              accent="#EC4899"
+              stages={[
+                { text: 'Generating prompt graph…' },
+                { text: 'Building node connections…' },
+                { text: 'Laying out pipeline…' },
+              ]}
+            />
             {/* Scaled inner canvas */}
             <div
               style={{
