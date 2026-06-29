@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { generateProductionPackDOCX } from '@/lib/docxGenerator';
 import { phase5 as phase5Api, ApiError } from '@/lib/api';
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -1069,6 +1070,11 @@ export default function Phase5() {
   /* ================================================================== */
   /*  RENDER                                                             */
   /* ================================================================== */
+
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading) {
+    return <PhaseLoadingScreen phase={5} />;
+  }
 
   return (
     <Layout>
