@@ -1021,7 +1021,7 @@ export default function Phase4() {
 
   const approvedRolesCount = useMemo(() => Object.values(roles).filter(r => r.status === 'Approved').length, [roles]);
   const allRolesApproved = approvedRolesCount === 4;
-  const exportUnlocked = verdict === 'SHIP' && allRolesApproved;
+  const exportUnlocked = verdict === 'SHIP' && !runningChecks && checks.length > 0;
 
   /* ── Render helpers ── */
   const getRoleFailingChecks = (role: string) => {
@@ -1552,7 +1552,7 @@ export default function Phase4() {
           >
             {!exportUnlocked && hoveredLocked && (
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-bg-quaternary rounded-lg text-xs text-text-secondary whitespace-nowrap border border-border-medium shadow-lg z-10">
-                {verdict !== 'SHIP' ? `Verdict is ${verdict}. Fix failures first.` : `All 4 roles must approve. ${approvedRolesCount}/4 approved.`}
+                {`Verdict is ${verdict}. Fix failures or override checks to reach SHIP.`}
               </div>
             )}
 
@@ -1593,7 +1593,7 @@ export default function Phase4() {
               )}
             >
               {advancing ? <Loader2 size={16} className="animate-spin" /> : exportUnlocked ? <Unlock size={16} /> : <Lock size={16} />}
-              {exportUnlocked ? 'Approve & Export to Phase 5' : `Locked - ${verdict}, ${approvedRolesCount}/4 roles`}
+              {exportUnlocked ? 'Approve & Export to Phase 5' : `Locked — Verdict: ${verdict}`}
             </motion.button>
           </div>
         </motion.div>
