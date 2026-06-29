@@ -14,6 +14,8 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { cn } from '@/lib/utils';
 import { phase4 as phase4Api, phase3 as phase3Api, ApiError } from '@/lib/api'
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
+import AIOperationOverlay from '@/components/AIOperationOverlay';
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  TYPES                                                              */
 /* ═══════════════════════════════════════════════════════════════════ */
@@ -1069,6 +1071,11 @@ export default function Phase4() {
     return 'text-sky-400';
   };
 
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading) {
+    return <PhaseLoadingScreen phase={4} />;
+  }
+
   return (
     <Layout>
       <div className="py-10 pb-16">
@@ -1115,6 +1122,17 @@ export default function Phase4() {
         </motion.div>
 
         {/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550 VERDICT BANNER \u2550\u2550\u2550\u2550\u2550\u2550\u2550 */}
+        <div className="relative">
+        <AIOperationOverlay
+          active={runningChecks}
+          accent="#8B5CF6"
+          stages={[
+            { text: 'Running quality checks…' },
+            { text: 'Analyzing screenplay against golden rules…' },
+            { text: 'Scoring hook strength & pacing…' },
+            { text: 'Computing final NPS score…' },
+          ]}
+        />
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1338,6 +1356,7 @@ export default function Phase4() {
           <motion.div variants={staggerContainer} initial="hidden" animate="show">
             <BrainRegionMatrix />
           </motion.div>
+        </div>
         </div>
 
         {/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550 ROLE APPROVAL PANEL \u2550\u2550\u2550\u2550\u2550\u2550\u2550 */}
