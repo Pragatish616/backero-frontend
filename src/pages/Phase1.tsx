@@ -440,6 +440,12 @@ export default function Phase1() {
   const researchCharCount = research.length;
   const isResearchReady = researchCharCount > 200;
 
+  /* --- auto-save language & duration to DB so AI calls always read the latest --- */
+  useEffect(() => {
+    if (!briefId || !language) return;
+    phase1Api.save(briefId, { language, estimated_length: estimatedLength } as never).catch(() => {});
+  }, [briefId, language, estimatedLength]);
+
   const wordCount = (s: string) => s.trim().split(/\s+/).filter(Boolean).length;
 
   const validateTopicField = useCallback((value: string, key: string) => {
@@ -475,7 +481,7 @@ export default function Phase1() {
     setNuggetsVisible(false);
     setExtractError(null);
     phase1Api
-      .extractNuggets(briefId, thePoint || niche || 'General topic', research)
+      .extractNuggets(briefId, thePoint || niche || 'General topic', research, language)
       .then((res) => {
         setLiveNuggets(res.nuggets);
         setNuggetsVisible(true);
