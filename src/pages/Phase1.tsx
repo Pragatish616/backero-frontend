@@ -18,6 +18,7 @@ import {
   Sparkles,
   Loader2,
   Paperclip,
+  ChevronDown,
 } from 'lucide-react';
 import { Layout } from '@/components/Layout';
 import { Card } from '@/components/Card';
@@ -80,6 +81,21 @@ const COPY_ELEMENTS = [
 /* Hardcoded nugget fallback removed — nuggets come from AI extraction or saved data only */
 
 const BLACKLIST = ['game-changer', 'revolutionary', 'unlock', 'secret', 'mind-blowing', 'insane'];
+
+const DELIVERY_STYLES = [
+  'Storyteller / Narrative',
+  'Teacher / Explainer',
+  'Hype / Energetic',
+  'Deadpan / Dry Humor',
+  'Conversational / Friend',
+  'Confrontational / Debate',
+] as const;
+
+const AUDIENCE_LEVELS = [
+  { value: 'Total Beginners', label: 'Total Beginners' },
+  { value: 'Some Knowledge', label: 'Some Knowledge' },
+  { value: 'Advanced / Experts', label: 'Advanced / Experts' },
+] as const;
 
 /**
  * The backend's phase1_data table has a single free-text `topic` column and
@@ -332,6 +348,12 @@ export default function Phase1() {
   const [fluffLoading, setFluffLoading] = useState(false);
   const [fluffGenerated, setFluffGenerated] = useState(false);
 
+  /* Creator Voice (optional) */
+  const [creatorVoiceOpen, setCreatorVoiceOpen] = useState(false);
+  const [deliveryStyle, setDeliveryStyle] = useState('');
+  const [sampleHook, setSampleHook] = useState('');
+  const [audienceLevel, setAudienceLevel] = useState('');
+
   const nicheEx = useMemo(() => getNicheExamples(niche), [niche]);
 
   const [toast, setToast] = useState<string | null>(null);
@@ -354,9 +376,18 @@ export default function Phase1() {
         if (d.content_style) setContentStyle(d.content_style);
         if (d.on_camera_actor) setActor(d.on_camera_actor);
         if (d.actor_brief) setActorBrief(d.actor_brief as string);
+        if (d.actor_brief) setDeliveryStyle(d.actor_brief as string);
         if (d.brand_company) setCompany(d.brand_company);
                 if (d.language) setLanguage(d.language);
         if (d.content_creator) setCreator(d.content_creator);
+        if ((d as any).sample_hook) setSampleHook((d as any).sample_hook);
+        if (d.content_style) {
+          setContentStyle(d.content_style);
+          // If it's an audience level value, also set that
+          if (['Total Beginners', 'Some Knowledge', 'Advanced / Experts'].includes(d.content_style)) {
+            setAudienceLevel(d.content_style);
+          }
+        }
         if (d.number_of_actors) setActorCount(String(d.number_of_actors));
         if (d.aspect_ratio) setAspectRatio(d.aspect_ratio);
         if (d.estimated_length) setEstimatedLength(d.estimated_length);
@@ -489,7 +520,7 @@ export default function Phase1() {
     hook_text: selectedNugget !== null ? nuggetSource[selectedNugget]?.text ?? null : null,
     knowledge_nuggets: liveNuggets ?? null,
     on_camera_actor: actor || null,
-    actor_brief: actorBrief || null,
+    actor_brief: deliveryStyle || actorBrief || null,
     brand_company: company || null,
     reference_description: buildReferenceDescription({
       thePoint, whyTheyCare, theProof, actionableTakeaway, copyDescription,
@@ -502,6 +533,7 @@ export default function Phase1() {
     aspect_ratio: aspectRatio || null,
     estimated_length: estimatedLength || null,
     production_date: date || null,
+    sample_hook: sampleHook || null,
   });
 
   const handleSaveDraft = () => {
@@ -1549,6 +1581,105 @@ export default function Phase1() {
                 </p>
               </div>
             </div>
+          </Card>
+        </motion.div>
+
+        <div className="h-6" />
+
+        {/* --- Field 7: Creator Voice (Optional) --- */}
+        <motion.div variants={cardVariants}>
+          <Card phaseAccent={ACCENT}>
+            <button
+              type="button"
+              onClick={() => setCreatorVoiceOpen((p) => !p)}
+              className="w-full flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <SectionNumber num={7} />
+                <div className="text-left">
+                  <h2 className="text-xl font-semibold text-text-primary">Creator Voice</h2>
+                  <p className="text-xs text-text-tertiary mt-0.5">Helps AI sound like YOU</p>
+                </div>
+              </div>
+              <motion.div
+                animate={{ rotate: creatorVoiceOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown size={20} className="text-text-tertiary" />
+              </motion.div>
+            </button>
+
+            <AnimatePresence>
+              {creatorVoiceOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: easeOut }}
+                  className="overflow-hidden"
+                >
+                  <div className="pt-5 space-y-5">
+                    {/* Delivery Style */}
+                    <div>
+                      <FormLabel>Delivery Style</FormLabel>
+                      <Select value={deliveryStyle} onValueChange={(v) => { setDeliveryStyle(v); setActorBrief(v); }}>
+                        <SelectTrigger className="bg-bg-tertiary border-border-subtle text-text-primary focus:ring-accent-input/30">
+                          <SelectValue placeholder="How does the creator deliver content?" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-bg-quaternary border-border-medium">
+                          {DELIVERY_STYLES.map((s) => (
+                            <SelectItem key={s} value={s} className="text-text-primary focus:bg-bg-tertiary focus:text-text-primary">
+                              {s}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Sample Hook */}
+                    <div>
+                      <FormLabel>
+                        Sample Hook <span className="text-text-tertiary font-normal">(optional)</span>
+                      </FormLabel>
+                      <Textarea
+                        value={sampleHook}
+                        onChange={(e) => setSampleHook(e.target.value)}
+                        placeholder="Paste a hook from one of your best videos... (helps AI match your voice)"
+                        className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30 min-h-[72px] resize-vertical"
+                      />
+                    </div>
+
+                    {/* Audience Level */}
+                    <div>
+                      <FormLabel>Audience Level</FormLabel>
+                      <div className="flex flex-wrap gap-3">
+                        {AUDIENCE_LEVELS.map((lvl) => (
+                          <label
+                            key={lvl.value}
+                            className={cn(
+                              'flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition-colors',
+                              audienceLevel === lvl.value
+                                ? 'border-accent-input bg-accent-input/5'
+                                : 'border-border-subtle bg-bg-tertiary hover:bg-bg-quaternary'
+                            )}
+                          >
+                            <input
+                              type="radio"
+                              name="audience-level"
+                              value={lvl.value}
+                              checked={audienceLevel === lvl.value}
+                              onChange={() => setAudienceLevel(lvl.value)}
+                              className="accent-accent-input"
+                            />
+                            <span className="text-sm text-text-primary">{lvl.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Card>
         </motion.div>
 
