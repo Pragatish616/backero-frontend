@@ -184,10 +184,11 @@ export const phase1 = {
       `/api/phase1/${briefId}/validate-hook`,
       { hook_text: hookText }
     ),
-  extractNuggets: (briefId: string, topic: string, researchText = '') =>
+  extractNuggets: (briefId: string, topic: string, researchText = '', language = 'EN') =>
     post<{ success: boolean; nuggets: KnowledgeNugget[] }>(`/api/phase1/${briefId}/extract-nuggets`, {
       topic,
       research_text: researchText,
+      language,
     }),
   subNiches: (niche: string) => get<{ niche: string; sub_niches: string[] }>(`/api/phase1/sub-niches/${niche}`),
   fluffExamples: (briefId: string, niche: string, topic = '', language = 'EN') =>
