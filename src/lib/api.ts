@@ -190,10 +190,10 @@ export const phase1 = {
       research_text: researchText,
     }),
   subNiches: (niche: string) => get<{ niche: string; sub_niches: string[] }>(`/api/phase1/sub-niches/${niche}`),
-  fluffExamples: (briefId: string, niche: string, topic = '') =>
+  fluffExamples: (briefId: string, niche: string, topic = '', language = 'EN') =>
     post<{ success: boolean; examples: { fluff: string; specific: string }[] }>(
       `/api/phase1/${briefId}/fluff-examples`,
-      { niche, topic }
+      { niche, topic, language }
     ),
   suggestTopics: (briefId: string, niche: string, subNiche = '') =>
     post<{ success: boolean; topics: { topic: string; hook_angle: string; viral_score: number; why: string }[] }>(
