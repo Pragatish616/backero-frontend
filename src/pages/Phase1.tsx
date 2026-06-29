@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -360,6 +360,9 @@ export default function Phase1() {
   const [saving, setSaving] = useState(false);
   const [loadingExisting, setLoadingExisting] = useState(false);
 
+  /* Guard: prevent auto-save from firing before initial data loads */
+  const dataLoadedRef = useRef(false);
+
   /* --- load existing Phase 1 data for this brief, if any --- */
   useEffect(() => {
     if (!briefId) return;
@@ -413,9 +416,12 @@ export default function Phase1() {
           if (parsed.actionableTakeaway) setActionableTakeaway(parsed.actionableTakeaway);
           if (parsed.copyDescription) setCopyDescription(parsed.copyDescription);
         }
+        dataLoadedRef.current = true;
       })
       .catch(() => {
         // 404 just means no Phase 1 data saved yet for this brief — that's fine.
+        // Still mark as loaded so auto-save with current defaults is allowed.
+        dataLoadedRef.current = true;
       })
       .finally(() => setLoadingExisting(false));
   }, [briefId]);
@@ -442,7 +448,7 @@ export default function Phase1() {
 
   /* --- auto-save language & duration to DB so AI calls always read the latest --- */
   useEffect(() => {
-    if (!briefId || !language) return;
+    if (!briefId || !language || !dataLoadedRef.current) return;
     phase1Api.save(briefId, { language, estimated_length: estimatedLength } as never).catch(() => {});
   }, [briefId, language, estimatedLength]);
 
@@ -746,12 +752,18 @@ export default function Phase1() {
               {/* Length */}
               <div>
                 <FormLabel>Estimated Length</FormLabel>
-                <Input
-                  placeholder="e.g. 30-60s"
-                  value={estimatedLength}
-                  onChange={(e) => setEstimatedLength(e.target.value)}
-                  className="bg-bg-tertiary border-border-subtle text-text-primary placeholder:text-text-tertiary focus-visible:ring-accent-input/30"
-                />
+                <Select value={estimatedLength} onValueChange={setEstimatedLength}>
+                  <SelectTrigger className="bg-bg-tertiary border-border-subtle text-text-primary focus:ring-accent-input/30">
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-bg-quaternary border-border-medium">
+                    {['15', '30', '45', '60', '90'].map((d) => (
+                      <SelectItem key={d} value={d} className="text-text-primary focus:bg-bg-tertiary focus:text-text-primary">
+                        {d}s
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
