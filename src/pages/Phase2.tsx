@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { phase2 as phase2Api, ApiError } from '@/lib/api';
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
 
 /* ═══════════════════════════════════════════════════════════════════ */
 /*  CONTENT TYPE → FORMAT → STRUCTURE CORRELATION MAP                */
@@ -331,6 +332,11 @@ export default function Phase2() {
 
   /* ── Render helpers ── */
   const pageAccent = '#F59E0B';
+
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading) {
+    return <PhaseLoadingScreen phase={2} />;
+  }
 
   return (
     <Layout>
