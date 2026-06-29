@@ -799,8 +799,21 @@ export default function Phase4() {
   }, [briefId]);
 
   const handleOverride = useCallback((checkId: string) => {
+    // Optimistic local update
     setChecks(prev => prev.map(c => c.id === checkId ? { ...c, overridden: !c.overridden } : c));
-  }, []);
+    // Sync to backend so overall_verdict updates in DB (required for Phase 5 advance)
+    if (briefId) {
+      phase4Api.overrideCheck(briefId, checkId).catch((err: unknown) => {
+        // Revert on failure
+        setChecks(prev => prev.map(c => c.id === checkId ? { ...c, overridden: !c.overridden } : c));
+        setRunError(
+          err instanceof ApiError
+            ? `Override failed: ${err.message}`
+            : 'Override failed — backend unreachable'
+        );
+      });
+    }
+  }, [briefId]);
 
   /* ═══════ APPLY FIX HANDLER ═══════ */
   const handleApplyFix = useCallback((checkId: string) => {
