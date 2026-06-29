@@ -35,6 +35,8 @@ import {
 import { cn } from '@/lib/utils';
 import { phase1 as phase1Api, type KnowledgeNugget, ApiError } from '@/lib/api';
 import { useBriefBootstrap } from '@/lib/useBriefBootstrap';
+import PhaseLoadingScreen from '@/components/PhaseLoadingScreen';
+import AIOperationOverlay from '@/components/AIOperationOverlay';
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                         */
@@ -529,6 +531,11 @@ export default function Phase1() {
   const selectedNuggetData = selectedNugget !== null ? nuggetSource[selectedNugget] : null;
 
   /* --- render --- */
+  /* ── Show skeleton loading screen while initial data loads ── */
+  if (briefLoading || loadingExisting) {
+    return <PhaseLoadingScreen phase={1} />;
+  }
+
   return (
     <Layout>
       <motion.div
@@ -866,6 +873,7 @@ export default function Phase1() {
 
         {/* --- Field 3: One Point Selector --- */}
         <motion.div variants={cardVariants}>
+          <div className="relative">
           <Card phaseAccent={ACCENT}>
             <SectionTitle num={3} title="One Point Selector" />
             <p className="text-sm-medium text-text-secondary mb-1">
@@ -1008,6 +1016,16 @@ export default function Phase1() {
               </div>
             </div>
           </Card>
+          <AIOperationOverlay
+            active={extracting}
+            accent={ACCENT}
+            stages={[
+              { text: 'Sending research to AI…' },
+              { text: 'Extracting knowledge nuggets…' },
+              { text: 'Ranking by viral potential…' },
+            ]}
+          />
+          </div>
         </motion.div>
 
         <div className="h-6" />
@@ -1301,7 +1319,7 @@ export default function Phase1() {
                   <Sparkles size={20} className="text-text-tertiary mb-2" />
                   <p className="text-sm text-text-secondary mb-1">
                     {niche
-                      ? `Click "Generate examples" to get AI examples for ${niche}${thePoint ? \` — \${thePoint.slice(0, 40)}\` : ''}`
+                      ? 'Click "Generate examples" to get AI examples for ' + niche + (thePoint ? ' — ' + thePoint.slice(0, 40) : '')
                       : 'Select a niche first, then generate examples'}
                   </p>
                   <p className="text-xs text-text-tertiary">Examples will be in your selected language</p>
