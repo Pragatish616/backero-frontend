@@ -394,7 +394,7 @@ export default function Phase1() {
     if (!briefId) return;
     setFluffLoading(true);
     phase1Api
-      .fluffExamples(briefId, niche, thePoint)
+      .fluffExamples(briefId, niche, thePoint, language)
       .then((res) => {
         if (res.examples && res.examples.length >= 3) {
           setFluffRows(res.examples);
@@ -403,7 +403,7 @@ export default function Phase1() {
       })
       .catch(() => {})
       .finally(() => setFluffLoading(false));
-  }, [briefId, niche, thePoint]);
+  }, [briefId, niche, thePoint, language]);
 
   /* --- computed --- */
   const researchCharCount = research.length;
