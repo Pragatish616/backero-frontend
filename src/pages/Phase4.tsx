@@ -1033,7 +1033,7 @@ export default function Phase4() {
   }, [briefId]);
 
   const approvedRolesCount = useMemo(() => Object.values(roles).filter(r => r.status === 'Approved').length, [roles]);
-  const allRolesApproved = approvedRolesCount === 4;
+  const _allRolesApproved = approvedRolesCount === 4;
   const exportUnlocked = verdict === 'SHIP' && !runningChecks && checks.length > 0;
 
   /* ── Render helpers ── */
