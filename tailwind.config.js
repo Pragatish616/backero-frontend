@@ -121,6 +121,11 @@ module.exports = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.2)" },
         },
+        "skeleton-shimmer": {
+          "0%": { opacity: "0.4" },
+          "50%": { opacity: "0.7" },
+          "100%": { opacity: "0.4" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -128,6 +133,7 @@ module.exports = {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
         "pulse-border": "pulse-border 3s ease-in-out infinite",
         "pulse-dot": "pulse-dot 3s ease-in-out infinite",
+        "skeleton-shimmer": "skeleton-shimmer 1.8s ease-in-out infinite",
       },
     },
   },
