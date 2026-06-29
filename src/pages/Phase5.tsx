@@ -332,15 +332,17 @@ export default function Phase5() {
   const [activeTab, setActiveTab] = useState<DocTab>('all');
   const [printFilter, setPrintFilter] = useState<string>('all');
 
-  const [scenes, setScreenplayScenes] = useState<SceneData[]>(DEFAULT_SCREENPLAY_SCENES);
+  const [scenes, setScreenplayScenes] = useState<SceneData[]>([]);
   const [meta, setMeta] = useState(DEFAULT_META);
   const [goldenRules, setGoldenRules] = useState<GoldenRule[]>(DEFAULT_GOLDEN_RULES);
   const [isLive, setIsLive] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     if (!briefId) return;
+    setDataLoading(true);
     phase5Api
       .get(briefId)
       .then((res) => {
@@ -350,6 +352,9 @@ export default function Phase5() {
         if (liveScenes.length > 0) {
           setScreenplayScenes(liveScenes.map(adaptBackendScene));
           setIsLive(true);
+        } else {
+          // No live data — use defaults so page is still usable
+          setScreenplayScenes(DEFAULT_SCREENPLAY_SCENES);
         }
         if (liveMeta) {
           setMeta((prev) => ({
@@ -376,12 +381,15 @@ export default function Phase5() {
         }
       })
       .catch((err: unknown) => {
+        // On error, populate with defaults so the page is still usable
+        setScreenplayScenes(DEFAULT_SCREENPLAY_SCENES);
         setLoadError(
           err instanceof ApiError
             ? `${err.message} — showing example data instead.`
             : 'Could not load the production pack — showing example data instead.'
         );
-      });
+      })
+      .finally(() => setDataLoading(false));
   }, [briefId]);
 
   const handleExportDocx = () => {
@@ -458,7 +466,7 @@ export default function Phase5() {
       });
     });
     return events.sort((a, b) => a.time - b.time);
-  }, []);
+  }, [scenes]);
 
   /* ---- JSON Envelope ---- */
   const jsonEnvelope = useMemo(() => ({
@@ -1072,7 +1080,7 @@ export default function Phase5() {
   /* ================================================================== */
 
   /* ── Show skeleton loading screen while initial data loads ── */
-  if (briefLoading) {
+  if (briefLoading || dataLoading) {
     return <PhaseLoadingScreen phase={5} />;
   }
 
